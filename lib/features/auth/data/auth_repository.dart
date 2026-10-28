@@ -10,17 +10,14 @@ class RegisteredUser {
   const RegisteredUser({
     required this.publicId,
     required this.username,
-    required this.displayName,
   });
 
   final String publicId;
   final String username;
-  final String displayName;
 
   factory RegisteredUser.fromJson(Map<String, dynamic> json) => RegisteredUser(
     publicId: json['public_id'] as String? ?? '',
     username: json['username'] as String? ?? '',
-    displayName: json['display_name'] as String? ?? '',
   );
 }
 

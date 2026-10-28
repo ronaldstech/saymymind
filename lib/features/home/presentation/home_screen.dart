@@ -3,6 +3,8 @@ import 'package:iconsax/iconsax.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../profile/data/profile_repository.dart';
+import '../../profile/presentation/my_profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({required this.user, super.key});
@@ -15,6 +17,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  late RegisteredUser? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = widget.user;
+  }
 
   static const _destinations = [
     _Destination('SMM', Iconsax.home_2),
@@ -24,30 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
     _Destination('Premium', Iconsax.crown_1),
   ];
 
-  void _showProfile() {
-    final user = widget.user;
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Your profile'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(user?.displayName.isNotEmpty == true ? user!.displayName : 'SAYMYMIND user'),
-            if (user?.username.isNotEmpty == true) ...[
-              const SizedBox(height: 8),
-              Text('@${user!.username}'),
-            ],
-            if (user?.publicId.isNotEmpty == true) ...[
-              const SizedBox(height: 8),
-              Text('ID: ${user!.publicId}'),
-            ],
-          ],
-        ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Done'))],
-      ),
+  Future<void> _showProfile() async {
+    final profile = await Navigator.of(context).push<MyProfile>(
+      MaterialPageRoute<MyProfile>(builder: (_) => const MyProfileScreen()),
     );
+    if (!mounted || profile == null) return;
+    setState(() {
+      _user = RegisteredUser(
+        publicId: profile.publicId,
+        username: profile.username,
+      );
+    });
   }
 
   void _showSettings() {
@@ -157,16 +153,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        widget.user?.displayName.isNotEmpty == true
-                                            ? widget.user!.displayName
+                                        _user?.username.isNotEmpty == true
+                                            ? '@${_user!.username}'
                                             : 'SAYMYMIND user',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(color: AppColors.prestigeMauve, fontWeight: FontWeight.w800),
                                       ),
-                                      if (widget.user?.username.isNotEmpty == true)
+                                      if (_user?.username.isNotEmpty == true)
                                         Text(
-                                          '@${widget.user!.username}',
+                                          'Your profile',
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(color: AppColors.muted, fontSize: 12),
@@ -201,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                Expanded(child: _selectedIndex == 0 ? _HomeContent(user: widget.user) : _ComingSoonContent(destination: destination)),
+                Expanded(child: _selectedIndex == 0 ? _HomeContent(user: _user) : _ComingSoonContent(destination: destination)),
               ],
             ),
           ),
@@ -326,7 +322,7 @@ class _HomeContent extends StatelessWidget {
               children: [
                 Container(width: 72, height: 72, decoration: const BoxDecoration(color: AppColors.martianGreen, shape: BoxShape.circle), child: const Icon(Iconsax.heart, color: AppColors.prestigeMauve, size: 32)),
                 const SizedBox(height: 24),
-                Text(user?.displayName.isNotEmpty == true ? 'Welcome, ${user!.displayName}' : 'You’re in.', textAlign: TextAlign.center, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: AppColors.prestigeMauve)),
+                Text(user?.username.isNotEmpty == true ? 'Welcome, @${user!.username}' : 'You’re in.', textAlign: TextAlign.center, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: AppColors.prestigeMauve)),
                 const SizedBox(height: 10),
                 const Text('Your space to say what’s on your mind is ready.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5, color: AppColors.muted)),
                 if (user?.publicId.isNotEmpty == true) ...[
