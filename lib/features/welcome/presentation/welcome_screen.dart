@@ -3,7 +3,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../auth/data/auth_repository.dart';
-import '../../home/presentation/home_screen.dart';
+import '../../profile/presentation/profile_completion_screen.dart';
 import 'widgets/conversation_art.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -34,7 +34,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       final user = await _authRepository.registerAnonymousUser();
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => HomeScreen(user: user)),
+        MaterialPageRoute<void>(
+          builder: (_) => ProfileCompletionScreen(user: user),
+        ),
       );
     } on AuthException catch (error) {
       if (!mounted) return;
