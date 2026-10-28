@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  bool _hasOpenedChatTab = false;
   late RegisteredUser? _user;
 
   @override
@@ -238,11 +239,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Expanded(
-                  child: switch (_selectedIndex) {
-                    0 => _HomeContent(user: _user),
-                    2 => const ChatFiltersScreen(),
-                    _ => _ComingSoonContent(destination: destination),
-                  },
+                  child: IndexedStack(
+                    index: _selectedIndex,
+                    children: [
+                      _HomeContent(user: _user),
+                      _ComingSoonContent(destination: _destinations[1]),
+                      _hasOpenedChatTab
+                          ? const ChatFiltersScreen()
+                          : _ComingSoonContent(destination: _destinations[2]),
+                      _ComingSoonContent(destination: _destinations[3]),
+                      _ComingSoonContent(destination: _destinations[4]),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -277,7 +285,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     selected: selected,
                     label: item.label,
                     child: InkWell(
-                      onTap: () => setState(() => _selectedIndex = index),
+                      onTap: () => setState(() {
+                        _selectedIndex = index;
+                        if (index == 2) _hasOpenedChatTab = true;
+                      }),
                       borderRadius: BorderRadius.circular(18),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),

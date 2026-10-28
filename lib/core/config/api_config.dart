@@ -3,6 +3,7 @@ abstract final class ApiConfig {
 
   static Uri get registerUser => Uri.parse('$baseUrl/auth/register');
   static Uri get myProfile => Uri.parse('$baseUrl/profile/me');
+  static Uri get matchmaking => Uri.parse('$baseUrl/matchmaking');
   static Uri get avatars {
     final versionedApi = Uri.parse(baseUrl);
     final apiPath = versionedApi.path.replaceFirst(RegExp(r'/v1/?$'), '');
