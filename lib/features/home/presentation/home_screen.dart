@@ -50,6 +50,41 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showSettings() {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.canvas,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: AppColors.softBlue.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: const Icon(Iconsax.setting_2, color: AppColors.prestigeMauve, size: 20),
+            ),
+            const SizedBox(width: 12),
+            const Text('Settings'),
+          ],
+        ),
+        content: const Text(
+          'Your account and privacy settings will be available here.',
+          style: TextStyle(color: AppColors.muted, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final destination = _destinations[_selectedIndex];
@@ -84,19 +119,72 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       PopupMenuButton<String>(
                         tooltip: 'Profile menu',
+                        offset: const Offset(0, 12),
+                        position: PopupMenuPosition.under,
+                        color: Colors.white,
+                        elevation: 12,
+                        surfaceTintColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(color: AppColors.softBlue.withValues(alpha: 0.8)),
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 236, maxWidth: 280),
                         onSelected: (value) {
                           if (value == 'profile') _showProfile();
+                          if (value == 'settings') _showSettings();
                         },
                         itemBuilder: (context) => [
                           PopupMenuItem<String>(
-                            value: 'profile',
+                            enabled: false,
+                            height: 72,
                             child: Row(
                               children: [
-                                const Icon(Iconsax.user, size: 19, color: AppColors.prestigeMauve),
+                                Container(
+                                  width: 42,
+                                  height: 42,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.softBlue,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Icon(Iconsax.user, size: 21, color: AppColors.prestigeMauve),
+                                ),
                                 const SizedBox(width: 12),
-                                Text(widget.user?.displayName.isNotEmpty == true ? widget.user!.displayName : 'My profile'),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.user?.displayName.isNotEmpty == true
+                                            ? widget.user!.displayName
+                                            : 'SAYMYMIND user',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(color: AppColors.prestigeMauve, fontWeight: FontWeight.w800),
+                                      ),
+                                      if (widget.user?.username.isNotEmpty == true)
+                                        Text(
+                                          '@${widget.user!.username}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(color: AppColors.muted, fontSize: 12),
+                                        ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
+                          ),
+                          const PopupMenuDivider(height: 1),
+                          PopupMenuItem<String>(
+                            value: 'profile',
+                            child: const _ProfileMenuItem(icon: Iconsax.user, label: 'My profile'),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'settings',
+                            child: const _ProfileMenuItem(icon: Iconsax.setting_2, label: 'Settings'),
                           ),
                         ],
                         child: Container(
@@ -205,6 +293,22 @@ class _Destination {
   const _Destination(this.label, this.icon);
   final String label;
   final IconData icon;
+}
+
+class _ProfileMenuItem extends StatelessWidget {
+  const _ProfileMenuItem({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          Icon(icon, size: 19, color: AppColors.prestigeMauve),
+          const SizedBox(width: 12),
+          Text(label, style: const TextStyle(color: AppColors.prestigeMauve, fontWeight: FontWeight.w600)),
+        ],
+      );
 }
 
 class _HomeContent extends StatelessWidget {
