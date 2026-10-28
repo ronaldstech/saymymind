@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:country_picker/country_picker.dart';
+import 'package:device_region/device_region.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
@@ -24,16 +25,40 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
   final _formKey = GlobalKey<FormState>();
   final _ageController = TextEditingController();
   final _profileRepository = ProfileRepository();
-  late Country? _country = _detectDeviceCountry();
+  Country? _country;
   String? _gender;
   String? _errorMessage;
   bool _isSaving = false;
+  bool _countryManuallySelected = false;
   int _step = 0;
 
-  Country? _detectDeviceCountry() {
-    final code = ui.PlatformDispatcher.instance.locale.countryCode;
-    if (code == null || code.isEmpty) return null;
-    return CountryService().findByCode(code);
+  @override
+  void initState() {
+    super.initState();
+    _detectDeviceCountry();
+  }
+
+  Future<void> _detectDeviceCountry() async {
+    String? code;
+    try {
+      code = await DeviceRegion.getSIMCountryCode();
+    } catch (_) {
+      // Some platforms and simulators do not expose SIM or network region.
+    }
+    if (code == null || code.trim().isEmpty) {
+      for (final locale in ui.PlatformDispatcher.instance.locales) {
+        final localeCode = locale.countryCode;
+        if (localeCode != null && localeCode.isNotEmpty) {
+          code = localeCode;
+          break;
+        }
+      }
+    }
+    if (!mounted || _countryManuallySelected || code == null || code.trim().isEmpty) {
+      return;
+    }
+    final country = CountryService().findByCode(code.trim().toUpperCase());
+    if (country != null) setState(() => _country = country);
   }
 
   @override
@@ -70,6 +95,7 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
       ),
       onSelect: (country) => setState(() {
         _country = country;
+        _countryManuallySelected = true;
         _errorMessage = null;
       }),
     );
@@ -231,9 +257,7 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
                         : _step == 1
                           ? _ProfileSectionCard(icon: Iconsax.calendar_1, title: 'Your age', subtitle: 'Tell us a little about you', child: TextFormField(controller: _ageController, keyboardType: TextInputType.number, inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)], validator: (value) { final age = int.tryParse(value ?? ''); if (age == null) return 'Enter your age to continue.'; if (age < 13 || age > 120) return 'Enter an age between 13 and 120.'; return null; }, decoration: _inputDecoration(hint: 'Enter your age', icon: Iconsax.calendar_edit, suffix: 'years old')))
                           : Column(children: [
-                              _ProfileSectionCard(icon: Iconsax.global_search, title: 'Where are you based?', subtitle: 'Helps us keep things relevant to you', child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_CountryField(country: _country, onTap: _selectCountry), const SizedBox(height: 10), Row(children: [const Icon(Iconsax.location, size: 14, color: AppColors.muted), const SizedBox(width: 6), Expanded(child: Text(_country == null ? 'Choose your country to continue.' : 'Suggested from your device region. Tap to change.', style: const TextStyle(color: AppColors.muted, fontSize: 12, height: 1.5)))])])),
-                              const SizedBox(height: 16),
-                              Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: AppColors.softBlue.withValues(alpha: 0.26), borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.softBlue.withValues(alpha: 0.9))), child: const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Icon(Iconsax.shield_tick, size: 20, color: AppColors.prestigeMauve), SizedBox(width: 12), Expanded(child: Text('Country comes from your device region setting, not GPS. You can update this anytime.', style: TextStyle(color: AppColors.darkGreen, fontSize: 13, height: 1.6)))])),
+                              _ProfileSectionCard(icon: Iconsax.global_search, title: 'Where are you based?', subtitle: 'Helps us keep things relevant to you', child: _CountryField(country: _country, onTap: _selectCountry)),
                             ])))),
                       if (_errorMessage != null) ...[
                         Container(width: double.infinity, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), decoration: BoxDecoration(color: AppColors.prestigeMauve.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.prestigeMauve.withValues(alpha: 0.4))), child: Text(_errorMessage!, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.prestigeMauve, fontWeight: FontWeight.w600, height: 1.5))),

@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   country_picker: ^2.0.28
+  device_region: ^1.4.0
   flutter:
     sdk: flutter
   flutter_secure_storage: ^11.2.0

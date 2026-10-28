@@ -5,6 +5,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/presentation/my_profile_screen.dart';
+import 'chat_filters_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({required this.user, super.key});
@@ -94,23 +95,61 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22, 12, 18, 12),
-                  child: Row(
-                    children: [
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [AppColors.prestigeMauve, AppColors.darkGreen],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.prestigeMauve.withValues(alpha: 0.16),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
                       Container(
-                        width: 42,
-                        height: 42,
+                        width: 46,
+                        height: 46,
                         decoration: BoxDecoration(
-                          color: AppColors.prestigeMauve,
-                          borderRadius: BorderRadius.circular(15),
+                          color: AppColors.martianGreen,
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         alignment: Alignment.center,
-                        child: const Text('s', style: TextStyle(color: AppColors.martianGreen, fontSize: 27, fontWeight: FontWeight.w900, height: 1)),
+                        child: const Text('s', style: TextStyle(color: AppColors.prestigeMauve, fontSize: 29, fontWeight: FontWeight.w900, height: 1)),
                       ),
-                      const SizedBox(width: 11),
+                      const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
-                          destination.label == 'SMM' ? 'SAYMYMIND' : destination.label,
-                          style: const TextStyle(color: AppColors.prestigeMauve, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'SAYMYMIND',
+                              style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w900, letterSpacing: 1.15),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Iconsax.shield_tick, size: 13, color: AppColors.martianGreen),
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    destination.label == 'SMM' ? 'A little more personal' : destination.label,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: Colors.white.withValues(alpha: 0.78), fontSize: 11, fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                       PopupMenuButton<String>(
@@ -184,20 +223,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                         child: Container(
-                          width: 42,
-                          height: 42,
+                          width: 44,
+                          height: 44,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.white.withValues(alpha: 0.12),
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.softBlue),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.24)),
                           ),
-                          child: const Icon(Iconsax.user, size: 21, color: AppColors.prestigeMauve),
+                          child: const Icon(Iconsax.user, size: 21, color: Colors.white),
                         ),
                       ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-                Expanded(child: _selectedIndex == 0 ? _HomeContent(user: _user) : _ComingSoonContent(destination: destination)),
+                Expanded(
+                  child: switch (_selectedIndex) {
+                    0 => _HomeContent(user: _user),
+                    2 => const ChatFiltersScreen(),
+                    _ => _ComingSoonContent(destination: destination),
+                  },
+                ),
               ],
             ),
           ),
