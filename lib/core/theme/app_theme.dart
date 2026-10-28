@@ -1,21 +1,31 @@
 ﻿import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const canvas = Color(0xFFF6F5EF);
-  static const ink = Color(0xFF17211D);
-  static const muted = Color(0xFF758078);
-  static const lime = Color(0xFFB9F278);
-  static const softGreen = Color(0xFFE9EEDF);
-  static const lavender = Color(0xFFD8D2F4);
-  static const peach = Color(0xFFE8A990);
-  static const noteMuted = Color(0xFFC3CDC5);
+  static const softBlue = Color(0xFFADDFF1);
+  static const prestigeMauve = Color(0xFF003152);
+  static const martianGreen = Color(0xFF99CC33);
+  static const darkGreen = Color(0xFF003333);
+  static const black = Color(0xFF000000);
+  static const orangeYellow = Color(0xFFFDBF2D);
+
+  // Shared semantic colors keep screens aligned with the brand palette.
+  static const canvas = softBlue;
+  static const muted = darkGreen;
 }
 
 abstract final class AppTheme {
   static ThemeData get light => ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: AppColors.canvas,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.lime),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.martianGreen,
+          primary: AppColors.prestigeMauve,
+          secondary: AppColors.martianGreen,
+          tertiary: AppColors.orangeYellow,
+          surface: AppColors.softBlue,
+          onSurface: AppColors.black,
+        ),
         fontFamily: 'Roboto',
       );
 }
+

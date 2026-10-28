@@ -17,14 +17,14 @@ class ConversationArt extends StatelessWidget {
             height: 218,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.softGreen,
+              color: AppColors.martianGreen,
             ),
           ),
           Positioned(
             left: 8,
             top: 28,
             child: ConversationNote(
-              color: Colors.white,
+              color: AppColors.orangeYellow,
               angle: -0.07,
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +32,7 @@ class ConversationArt extends StatelessWidget {
                   Text(
                     'somewhere to\nput the heavy stuff.',
                     style: TextStyle(
-                      color: AppColors.ink,
+                      color: AppColors.prestigeMauve,
                       fontSize: 15,
                       height: 1.25,
                       fontWeight: FontWeight.w700,
@@ -52,17 +52,17 @@ class ConversationArt extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: const BoxDecoration(
-                color: AppColors.lime,
+                color: AppColors.orangeYellow,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Iconsax.heart_copy, color: AppColors.ink, size: 22),
+              child: const Icon(Iconsax.heart_copy, color: AppColors.prestigeMauve, size: 22),
             ),
           ),
           Positioned(
             right: 2,
             bottom: 23,
             child: ConversationNote(
-              color: AppColors.ink,
+              color: AppColors.prestigeMauve,
               angle: 0.055,
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +70,7 @@ class ConversationArt extends StatelessWidget {
                   Text(
                     'you’re not the\nonly one 🤍',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.softBlue,
                       fontSize: 15,
                       height: 1.25,
                       fontWeight: FontWeight.w700,
@@ -79,11 +79,11 @@ class ConversationArt extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Row(children: [
-                    Icon(Iconsax.heart, size: 14, color: AppColors.lime),
+                    Icon(Iconsax.heart, size: 14, color: AppColors.martianGreen),
                     SizedBox(width: 5),
                     Text(
                       '12 felt this',
-                      style: TextStyle(color: AppColors.noteMuted, fontSize: 10),
+                      style: TextStyle(color: AppColors.softBlue, fontSize: 10),
                     ),
                   ]),
                 ],
@@ -97,10 +97,10 @@ class ConversationArt extends StatelessWidget {
               width: 39,
               height: 39,
               decoration: const BoxDecoration(
-                color: AppColors.lavender,
+                color: AppColors.martianGreen,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Iconsax.message, size: 18, color: AppColors.ink),
+              child: const Icon(Iconsax.message, size: 18, color: AppColors.prestigeMauve),
             ),
           ),
           Positioned(
@@ -110,7 +110,7 @@ class ConversationArt extends StatelessWidget {
               width: 8,
               height: 8,
               decoration: const BoxDecoration(
-                color: AppColors.peach,
+                color: AppColors.orangeYellow,
                 shape: BoxShape.circle,
               ),
             ),
@@ -126,7 +126,7 @@ class _AnonymousLabel extends StatelessWidget {
   Widget build(BuildContext context) => const Row(children: [
         CircleAvatar(
           radius: 9,
-          backgroundColor: Color(0xFFE7E8E0),
+          backgroundColor: AppColors.softBlue,
           child: Icon(Iconsax.user, size: 12, color: AppColors.muted),
         ),
         SizedBox(width: 6),
@@ -136,3 +136,7 @@ class _AnonymousLabel extends StatelessWidget {
         ),
       ]);
 }
+
+
+
+

@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:saymymind/core/theme/app_theme.dart';
 
 class ConversationNote extends StatelessWidget {
   const ConversationNote({
@@ -23,7 +24,7 @@ class ConversationNote extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
+                color: AppColors.black.withValues(alpha: 0.08),
                 blurRadius: 22,
                 offset: const Offset(0, 9),
               ),
@@ -33,3 +34,4 @@ class ConversationNote extends StatelessWidget {
         ),
       );
 }
+

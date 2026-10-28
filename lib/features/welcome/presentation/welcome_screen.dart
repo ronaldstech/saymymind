@@ -34,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
                             height: 1.08,
                             letterSpacing: -1.8,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.ink,
+                            color: AppColors.prestigeMauve,
                           ),
                         ),
                         const SizedBox(height: 14),
@@ -61,8 +61,8 @@ class WelcomeScreen extends StatelessWidget {
                               ),
                             ),
                             style: FilledButton.styleFrom(
-                              backgroundColor: AppColors.ink,
-                              foregroundColor: Colors.white,
+                              backgroundColor: AppColors.prestigeMauve,
+                              foregroundColor: AppColors.softBlue,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
                               ),
@@ -82,22 +82,6 @@ class WelcomeScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 18),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Iconsax.magic_star, size: 15, color: Color(0xFF74816F)),
-                            SizedBox(width: 7),
-                            Text(
-                              'No email. No password. Just you.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.muted,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
                         ),
                         SizedBox(height: isCompact ? 20 : 30),
                       ]),
@@ -120,14 +104,14 @@ class _WelcomeHeader extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: AppColors.ink,
+            color: AppColors.prestigeMauve,
             borderRadius: BorderRadius.circular(13),
           ),
           child: const Center(
             child: Text(
               's',
               style: TextStyle(
-                color: AppColors.lime,
+                color: AppColors.martianGreen,
                 fontSize: 25,
                 fontWeight: FontWeight.w800,
                 height: 1,
@@ -139,7 +123,7 @@ class _WelcomeHeader extends StatelessWidget {
         const Text(
           'saymymind',
           style: TextStyle(
-            color: AppColors.ink,
+            color: AppColors.prestigeMauve,
             fontSize: 18,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
@@ -149,7 +133,7 @@ class _WelcomeHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.orangeYellow,
             borderRadius: BorderRadius.circular(20),
           ),
           child: const Row(children: [
@@ -159,7 +143,7 @@ class _WelcomeHeader extends StatelessWidget {
               'A little more private',
               style: TextStyle(
                 fontSize: 11,
-                color: AppColors.ink,
+                color: AppColors.prestigeMauve,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -167,3 +151,7 @@ class _WelcomeHeader extends StatelessWidget {
         ),
       ]);
 }
+
+
+
+
