@@ -59,7 +59,7 @@ class ProfileRepository {
         body: jsonEncode({
           'username': username.trim(),
           'bio': bio.trim(),
-          if (avatarId != null) 'avatar_id': avatarId,
+          'avatar_id': ?avatarId,
         }),
       ),
       failureMessage: 'Could not connect to SayMyMind. Check your connection and try again.',
@@ -115,6 +115,9 @@ class ProfileRepository {
     required String gender,
     required int age,
     required String country,
+    required String username,
+    required String bio,
+    int? avatarId,
   }) async {
     final token = await _sessionStore.readAccessToken();
     if (token == null || token.isEmpty) {
@@ -127,7 +130,14 @@ class ProfileRepository {
       response = await _client.patch(
         ApiConfig.myProfile,
         headers: _authHeaders(token),
-        body: jsonEncode({'gender': gender, 'age': age, 'country': country}),
+        body: jsonEncode({
+          'gender': gender,
+          'age': age,
+          'country': country,
+          'username': username.trim(),
+          'bio': bio.trim(),
+          'avatar_id': ?avatarId,
+        }),
       );
     } catch (_) {
       throw const ProfileException(

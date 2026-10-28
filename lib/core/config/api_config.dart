@@ -4,6 +4,13 @@ abstract final class ApiConfig {
   static Uri get registerUser => Uri.parse('$baseUrl/auth/register');
   static Uri get myProfile => Uri.parse('$baseUrl/profile/me');
   static Uri get matchmaking => Uri.parse('$baseUrl/matchmaking');
+  static Uri conversationMessages(int conversationId, {int? afterId}) =>
+      Uri.parse('$baseUrl/conversations/$conversationId/messages').replace(
+        queryParameters: {
+          'limit': '100',
+          if (afterId != null) 'after_id': '$afterId',
+        },
+      );
   static Uri get avatars {
     final versionedApi = Uri.parse(baseUrl);
     final apiPath = versionedApi.path.replaceFirst(RegExp(r'/v1/?$'), '');

@@ -245,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _HomeContent(user: _user),
                       _ComingSoonContent(destination: _destinations[1]),
                       _hasOpenedChatTab
-                          ? const ChatFiltersScreen()
+                          ? ChatFiltersScreen(user: _user)
                           : _ComingSoonContent(destination: _destinations[2]),
                       _ComingSoonContent(destination: _destinations[3]),
                       _ComingSoonContent(destination: _destinations[4]),

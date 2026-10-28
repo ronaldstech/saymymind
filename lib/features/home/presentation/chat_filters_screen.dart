@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../auth/data/auth_repository.dart';
 import '../data/matchmaking_repository.dart';
+import 'conversation_screen.dart';
 
 class ChatFiltersScreen extends StatefulWidget {
-  const ChatFiltersScreen({super.key});
+  const ChatFiltersScreen({this.user, super.key});
+
+  final RegisteredUser? user;
 
   @override
   State<ChatFiltersScreen> createState() => _ChatFiltersScreenState();
@@ -48,6 +52,7 @@ class _ChatFiltersScreenState extends State<ChatFiltersScreen> {
   bool _pollInProgress = false;
   int _searchGeneration = 0;
   bool _restoringStatus = true;
+  int? _openedConversationId;
 
   @override
   void dispose() {
@@ -150,6 +155,7 @@ class _ChatFiltersScreenState extends State<ChatFiltersScreen> {
         _match = state.match;
         _searchError = null;
       });
+      _openConversation(state.match!);
       return;
     }
     if (state.status == 'waiting') {
@@ -168,6 +174,19 @@ class _ChatFiltersScreenState extends State<ChatFiltersScreen> {
       _isCancelling = false;
       _searchError = 'Your search is no longer active. Start again when you’re ready.';
     });
+  }
+
+  Future<void> _openConversation(MatchDetails match) async {
+    if (_openedConversationId == match.conversationId) return;
+    _openedConversationId = match.conversationId;
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => ConversationScreen(
+          match: match,
+          currentUserPublicId: widget.user?.publicId ?? '',
+        ),
+      ),
+    );
   }
 
   void _startStatusPolling() {
@@ -240,8 +259,85 @@ class _ChatFiltersScreenState extends State<ChatFiltersScreen> {
     }
   }
 
+  Future<void> _showFilterDrawer() async {
+    await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.88,
+          minChildSize: 0.55,
+          maxChildSize: 0.96,
+          expand: false,
+          builder: (context, controller) => Container(
+            decoration: const BoxDecoration(
+              color: AppColors.canvas,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+            ),
+            child: Column(children: [
+              const SizedBox(height: 10),
+              Container(width: 42, height: 4, decoration: BoxDecoration(color: AppColors.softBlue, borderRadius: BorderRadius.circular(4))),
+              Expanded(child: _buildFilterEditor(controller)),
+            ]),
+          ),
+        ),
+      );
+  }
+
   @override
-  Widget build(BuildContext context) => ListView(
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: AppColors.canvas,
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [AppColors.prestigeMauve, AppColors.darkGreen]),
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: [BoxShadow(color: AppColors.prestigeMauve.withValues(alpha: 0.14), blurRadius: 22, offset: const Offset(0, 10))],
+              ),
+              child: Row(children: [
+                Container(width: 54, height: 54, decoration: BoxDecoration(color: AppColors.martianGreen, borderRadius: BorderRadius.circular(18)), child: const Icon(Iconsax.messages_2, color: AppColors.prestigeMauve, size: 26)),
+                const SizedBox(width: 15),
+                const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('YOUR NEXT CONVERSATION', style: TextStyle(color: AppColors.martianGreen, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+                  SizedBox(height: 5),
+                  Text('Find your kind of chat', style: TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+                  SizedBox(height: 4),
+                  Text('A safe space to connect, one conversation at a time.', style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4)),
+                ])),
+              ]),
+            ),
+            const SizedBox(height: 22),
+            const Row(children: [Icon(Iconsax.shield_tick, size: 16, color: AppColors.darkGreen), SizedBox(width: 7), Text('Your preferences', style: TextStyle(color: AppColors.prestigeMauve, fontSize: 16, fontWeight: FontWeight.w800))]),
+            const SizedBox(height: 11),
+            ChatFiltersWidget(language: _language, gender: _gender, ageRange: _ageRange, country: _country?.name, interests: _selectedInterests.toList()),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(onPressed: _showFilterDrawer, icon: const Icon(Iconsax.setting_2, size: 18), label: const Text('Customize filters'), style: OutlinedButton.styleFrom(foregroundColor: AppColors.prestigeMauve, backgroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 15), side: BorderSide(color: AppColors.softBlue.withValues(alpha: 0.8)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)))),
+            if (_searchError != null) ...[const SizedBox(height: 16), _SearchMessage(message: _searchError!, isError: true)],
+            if (_isSearching) ...[const SizedBox(height: 16), _SearchingCard(cancelling: _isCancelling, onCancel: _isCancelling ? null : _cancelSearch)],
+            if (_match != null) ...[const SizedBox(height: 16), _MatchFoundCard(match: _match!)],
+          ],
+        ),
+        bottomNavigationBar: SafeArea(child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+          SizedBox(height: 56, width: double.infinity, child: FilledButton.icon(
+            onPressed: _restoringStatus || _isSearching || _match != null ? null : _startSearch,
+            icon: _match != null ? const Icon(Iconsax.tick_circle, size: 20) : _isSearching ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.softBlue)) : const Icon(Iconsax.search_normal_1, size: 20),
+            label: Text(_restoringStatus ? 'Checking your status...' : _match != null ? 'Conversation ready' : _isSearching ? 'Searching for a partner…' : 'Find a chat partner', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.prestigeMauve, foregroundColor: AppColors.softBlue, elevation: 3, shadowColor: AppColors.prestigeMauve.withValues(alpha: 0.24), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19))),
+          )),
+          const SizedBox(height: 8),
+          const Text('A thoughtful conversation can start with one tap.', style: TextStyle(color: AppColors.muted, fontSize: 11)),
+          ]),
+        )),
+      );
+
+  Widget _buildFilterEditor(ScrollController controller) => ListView(
+        controller: controller,
         padding: const EdgeInsets.fromLTRB(22, 8, 22, 28),
         children: [
           Row(
@@ -300,7 +396,7 @@ class _ChatFiltersScreenState extends State<ChatFiltersScreen> {
             subtitle: 'Choose the language you’d like to chat in.',
             icon: Iconsax.global,
             child: DropdownButtonFormField<String>(
-              value: _language,
+              initialValue: _language,
               decoration: _dropdownDecoration('Language', Iconsax.message_text_1),
               icon: const Icon(Iconsax.arrow_down_1, size: 17),
               items: _languages
@@ -494,6 +590,50 @@ class _ChatFiltersScreenState extends State<ChatFiltersScreen> {
       );
 }
 
+/// Compact, reusable summary of the active chat matching preferences.
+class ChatFiltersWidget extends StatelessWidget {
+  const ChatFiltersWidget({
+    required this.language,
+    required this.gender,
+    required this.ageRange,
+    required this.interests,
+    this.country,
+    super.key,
+  });
+
+  final String language;
+  final String gender;
+  final RangeValues ageRange;
+  final List<String> interests;
+  final String? country;
+
+  @override
+  Widget build(BuildContext context) {
+    final values = <String>[
+      language,
+      gender,
+      '${ageRange.start.round()}–${ageRange.end.round()} years',
+      ?country,
+      ...interests,
+    ];
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.softBlue.withValues(alpha: 0.8))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Default chat filters', style: TextStyle(color: AppColors.prestigeMauve, fontSize: 15, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 5),
+        const Text('Adjust who you meet whenever you like.', style: TextStyle(color: AppColors.muted, fontSize: 12)),
+        const SizedBox(height: 13),
+        Wrap(spacing: 8, runSpacing: 8, children: values.map((value) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+          decoration: BoxDecoration(color: AppColors.softBlue.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(20)),
+          child: Text(value, style: const TextStyle(color: AppColors.prestigeMauve, fontSize: 12, fontWeight: FontWeight.w700)),
+        )).toList()),
+      ]),
+    );
+  }
+}
+
 class _FilterCard extends StatelessWidget {
   const _FilterCard({
     required this.title,
@@ -549,7 +689,7 @@ class _FilterCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (trailing != null) trailing!,
+                ?trailing,
               ],
             ),
             const SizedBox(height: 15),
