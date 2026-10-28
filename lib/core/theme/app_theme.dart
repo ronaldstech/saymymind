@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 abstract final class AppColors {
   static const softBlue = Color(0xFFADDFF1);
@@ -9,23 +9,22 @@ abstract final class AppColors {
   static const orangeYellow = Color(0xFFFDBF2D);
 
   // Shared semantic colors keep screens aligned with the brand palette.
-  static const canvas = softBlue;
+  static const canvas = Color(0xFFFFFFFF);
   static const muted = darkGreen;
 }
 
 abstract final class AppTheme {
   static ThemeData get light => ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.canvas,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.martianGreen,
-          primary: AppColors.prestigeMauve,
-          secondary: AppColors.martianGreen,
-          tertiary: AppColors.orangeYellow,
-          surface: AppColors.softBlue,
-          onSurface: AppColors.black,
-        ),
-        fontFamily: 'Roboto',
-      );
+    useMaterial3: true,
+    scaffoldBackgroundColor: AppColors.canvas,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.martianGreen,
+      primary: AppColors.prestigeMauve,
+      secondary: AppColors.martianGreen,
+      tertiary: AppColors.orangeYellow,
+      surface: Color(0xFFFFFFFF),
+      onSurface: AppColors.black,
+    ),
+    fontFamily: 'Roboto',
+  );
 }
-

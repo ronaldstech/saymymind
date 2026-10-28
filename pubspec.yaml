@@ -1,4 +1,4 @@
-name: saymymind
+﻿name: saymymind
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0+1
@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_secure_storage: ^11.2.0
+  http: ^1.6.0
   iconsax_flutter: ^1.0.1
 
 dev_dependencies:
