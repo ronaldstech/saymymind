@@ -184,9 +184,17 @@ class _ChatFiltersScreenState extends State<ChatFiltersScreen> {
         builder: (_) => ConversationScreen(
           match: match,
           currentUserPublicId: widget.user?.publicId ?? '',
+          onConversationEnded: _handleConversationEnded,
+          onNewChat: _startSearch,
         ),
       ),
     );
+  }
+
+  void _handleConversationEnded() {
+    if (!mounted) return;
+    _openedConversationId = null;
+    setState(() => _match = null);
   }
 
   void _startStatusPolling() {

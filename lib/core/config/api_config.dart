@@ -4,6 +4,11 @@ abstract final class ApiConfig {
   static Uri get registerUser => Uri.parse('$baseUrl/auth/register');
   static Uri get myProfile => Uri.parse('$baseUrl/profile/me');
   static Uri get matchmaking => Uri.parse('$baseUrl/matchmaking');
+  static Uri conversationEnd(int conversationId) =>
+      Uri.parse('$baseUrl/conversations/$conversationId/end');
+  static Uri get friends => Uri.parse('$baseUrl/friends');
+  static Uri get blocks => Uri.parse('$baseUrl/blocks');
+  static Uri get reports => Uri.parse('$baseUrl/reports');
   static Uri conversationMessages(int conversationId, {int? afterId}) =>
       Uri.parse('$baseUrl/conversations/$conversationId/messages').replace(
         queryParameters: {

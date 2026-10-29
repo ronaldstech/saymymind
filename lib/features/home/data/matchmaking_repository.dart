@@ -143,20 +143,26 @@ class MatchPartner {
   const MatchPartner({
     required this.publicId,
     this.displayName,
+    this.username,
     this.avatarUrl,
     this.avatarId,
+    this.isOnline,
   });
 
   final String publicId;
   final String? displayName;
+  final String? username;
   final String? avatarUrl;
   final int? avatarId;
+  final bool? isOnline;
 
   factory MatchPartner.fromJson(Map<String, dynamic> json) => MatchPartner(
     publicId: json['public_id'] as String? ?? '',
     displayName: json['display_name'] as String?,
+    username: json['username'] as String?,
     avatarUrl: json['avatar_url'] as String?,
     avatarId: _toIntOrNull(json['avatar_id']),
+    isOnline: json['is_online'] as bool? ?? json['online'] as bool?,
   );
 }
 

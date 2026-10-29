@@ -49,6 +49,51 @@ class ConversationRepository {
         : null;
   }
 
+  Future<void> endConversation(int conversationId) async {
+    final response = await _authorized((headers) => _client.post(
+      ApiConfig.conversationEnd(conversationId),
+      headers: headers,
+    ));
+    _decode(response, 'end conversation');
+  }
+
+  Future<bool> addFriend(String publicId) async {
+    final response = await _authorized((headers) => _client.post(
+      ApiConfig.friends,
+      headers: headers,
+      body: jsonEncode({'public_id': publicId}),
+    ));
+    final data = _decode(response, 'add friend');
+    if (data is! Map<String, dynamic> || data['is_friend'] != true) {
+      throw const ConversationException('The server could not confirm this friend.');
+    }
+    return data['added'] == true;
+  }
+
+  Future<void> blockUser(String publicId) async {
+    final response = await _authorized((headers) => _client.post(
+      ApiConfig.blocks,
+      headers: headers,
+      body: jsonEncode({'public_id': publicId}),
+    ));
+    final data = _decode(response, 'block user');
+    if (data is! Map<String, dynamic> || data['blocked'] != true) {
+      throw const ConversationException('The server could not confirm the block.');
+    }
+  }
+
+  Future<void> reportUser(String publicId, String reason) async {
+    final response = await _authorized((headers) => _client.post(
+      ApiConfig.reports,
+      headers: headers,
+      body: jsonEncode({'public_id': publicId, 'reason': reason}),
+    ));
+    final data = _decode(response, 'send report');
+    if (data is! Map<String, dynamic> || data['report_id'] == null) {
+      throw const ConversationException('The server could not confirm your report.');
+    }
+  }
+
   Future<http.Response> _authorized(
     Future<http.Response> Function(Map<String, String>) request,
   ) async {
